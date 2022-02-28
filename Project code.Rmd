@@ -1,0 +1,313 @@
+---
+title: "DS610 Project"
+author: "Enad Alotaibi G200002614 & Abdulaziz Alqumayzi G200007615"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+  pdf_document:
+    latex_engine: xelatex
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE,comment = NA,fig.width = 10,fig.height = 5)
+```
+## Task 1
+
+### Paper 1) A Multiple Linear Regression Approach For Estimating the Market Value of Football Players in Forward Position
+
+The paper A Multiple Linear Regression Approach For Estimating the Market Value of Football Players in Forward Position is about estimating the market value of football players in forward position. Physical and performance factors during 2017 - 2018 season are considered. Data is from 4 major European leagues. This data comprises of forward players age between 20 and 34 from Bundesliga, Serie A, La Liga and Premier League.
+
+This data contains the information about the league they are playing, the club they are playing, heights, dominant legs, their ages, outfitter, nationalities, direct contribution to goal, matches played in that season,card scores, and total time they have played in that season.
+
+According to this model, 105 variables were used in this model based on metrics listed above, from this model it is found that the r-squared was 0.963(96.3%). This means that most of variations were explained by the model. Hence, we can see that the models performs well.
+
+Linear regression was appropriate here because the dependent variable (market value) was quantitative variable. Therefore giving regression model used to predict market value of foward football players.
+
+This method can be improved by trying other predictive models for instance decision tree. This model will help clubs to know where is the market value of their player of interest. The market value from previous data can be group into two classes then a model built. This will help the clubs to plan their budgets appropriately.
+
+### Paper 2)  A study on multiple linear regression analysis.
+
+This paper is about estimating KPSS score based on program development, instructional techniques, counselling, educational psychology and measurement & evaluation score. The data comes from Sakarya University. Regression was used because the dependent variable is quantitative variable.
+
+Therefore regression was used to predict KPSS scores based on program development, instructional techniques, counselling, educational psychology and measurement & evaluation scores.
+
+According to the result, the r squared wa 0.87(87%).This means that 87% of variations were expressed by model. 87% means good performance of the model.
+
+On average we can see that KPSS scores are 9.811, perfomance of other metrics are as follows:
+
+* Measurement improves KPSS by 1.157
+* Educationl psychology improves KPSS by 0.090
+* Teaching methods reduces KPSS by 0.339
+* Guidance reduces KPSS by 0.195 and 
+* Curriculum development increases KPSS by 0.078
+
+
+This method can be improved by trying other predictive models for instance decision tree. This model will help schools to know where is the KPSS value of their students of interest. The KPSS value from previous data can be group into two classes then a model built. This will help the schools to plan their education appropriately.
+```{r}
+  install.packages("psych")
+```
+
+## Task 2
+
+```{r}
+# Cleaning environment
+rm(list = ls())
+
+# load packages
+suppressPackageStartupMessages({
+  library(tidyverse)
+  library(psych)
+})
+
+# loading data
+CarPrice = read_csv('CarPrice_Assignment.csv')
+```
+
+**The type and structure of the data**
+
+```{r}
+sapply(X = CarPrice,FUN = class) %>% 
+  as.data.frame() %>% 
+  rownames_to_column(.data = .,var = 'Variables') %>% 
+  rename('Class' = '.') %>% 
+  knitr::kable()
+```
+
+```{r}
+
+```
+**Interpretation**
+
+The data set carprice has 205 observations and 26 variables. The data type of these variables are shown above.
+```{r}
+
+```
+**Derive descriptive statistics**
+
+```{r}
+num_df = CarPrice %>% 
+  select_if(is.numeric) %>% 
+  select(-c(car_ID))
+
+# descriptive statistics
+num_df %>% 
+  describe() %>% 
+  as.data.frame() %>% 
+  select(mean,sd,median,min,max,range) %>% 
+  round(2) %>% 
+  rownames_to_column(.data = .,var = 'Variables') %>% 
+  knitr::kable()
+```
+
+```{r}
+
+```
+**Interpretation**
+
+ The table above shows the descriptive statistics for each numeric variable. The statistics covered are: mean, standard deviation, median, minimum, maximum and range.
+ 
+```{r}
+
+```
+**Fuel type**
+```{r}
+CarPrice %>% 
+  ggplot(aes(fueltype,fill = fueltype))+
+  theme_bw()+
+  geom_bar(show.legend = FALSE)+
+  coord_flip()+
+  labs(x = 'Fuel type', y = 'Frequency',title = 'Fuel type comparison')
+```
+
+```{r}
+
+```
+
+**Number of doors**
+```{r}
+CarPrice %>% 
+  ggplot(aes(doornumber,fill = doornumber))+
+  theme_bw()+
+  geom_bar(show.legend = FALSE)+
+  coord_flip()+
+  labs(x = 'Door number', y = 'Frequency',title = 'Door number comparison')
+```
+
+```{r}
+
+```
+
+**Car body comparison**
+```{r}
+CarPrice %>% 
+  ggplot(aes(carbody,fill = carbody))+
+  theme_bw()+
+  geom_bar(show.legend = FALSE)+
+  coord_flip()+
+  labs(x = 'Car body', y = 'Frequency',title = 'Car body comparison')
+```
+
+```{r}
+
+```
+**Interpretation**
+
+Generally, cars run on fuel. When it comes to fuel gas is prefered to diesel.Nearly 90% of cars run on gas as 10% are on diesel. Based on this data 44% of cars have 2 doors while 56% have 4 doors. There are five car body for instance: wagon,sedan, hatchback, hardtop and convertible. Most of cars are sedan(46%) and hatchback(34%). The least produced cars are convertibles(3.4%).
+
+```{r}
+
+```
+## Task 3
+```{r}
+set.seed(123)
+index <- sample(1:nrow(CarPrice), 100)
+sample_df = CarPrice[index,]
+
+```
+
+**Independent t test**
+
+```{r}
+# Visualization
+width_height = sample_df %>% 
+  select(carwidth,carheight) %>% 
+  gather(key = Measure,value = Values)
+
+boxplot(Values ~ Measure,
+        data = width_height,
+        main = "Car measurement by Values",
+        xlab = "Car measurement",ylab = "Value",
+        col = "red",border = "black")
+
+# test
+t.test(sample_df$carwidth, sample_df$carheight,var.equal = TRUE)
+```
+
+
+```{r}
+
+```
+
+In the result above :
+
+t is the t-test statistic value (t = 37.56),
+df is the degrees of freedom (df= 198),
+p-value is the significance level of the t-test (p-value = < 2.2e-16).
+conf.int is the confidence interval of the mean at 95% (conf.int = [11.26005, 12.50795]);
+sample estimates is he mean value of the sample (mean = 65.886, 54.002 ).
+
+The p-value of the test is < 2.2e-16, which is less than the significance level alpha = 0.05. We can conclude that width of the car is significantly different from height of the car with a p-value < 2.2e-16
+
+```{r}
+
+```
+
+**Dependent t test**
+
+```{r}
+t.test(sample_df$carwidth, sample_df$carheight,paired = TRUE)
+```
+
+
+```{r}
+
+```
+
+In the result above :
+
+* **t** is the t-test statistic value (t = 48.38),
+* **df** is the degrees of freedom (df= 99),
+* **p-value** is the significance level of the t-test (p-value < 2.2e-16).
+* **conf.int** is the confidence interval (conf.int) of the mean differences at 95% is also shown (conf.int= [11.3966, 12.3714])
+* **sample estimates** is the mean differences between pairs (mean = 11.884).
+
+The p-value of the test is < 2.2e-16, which is less than the significance level alpha = 0.05. We can then reject null hypothesis and conclude that the average width of the car is significantly different from the average height of the car with a p-value < 2.2e-16.
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+## Task 4
+```{r}
+model_df = sample_df[,22:26]
+
+lm_model = lm(formula = (price ~ .),data = model_df)
+summary(lm_model)
+```
+
+```{r}
+
+```
+**Interpretation**
+
+Based on the results above, multiple linear regression has been used to predict car price using horsepower, peakrpm,  citympg and highwaympg. From this result,  horsepower and peakrpm are statistically significant in predicting price as their respective p-values are less than 0.05(5%). The p-vales are 4.45e-12 and 0.00015 for horsepower and peakrpm respectively.
+
+citympg and highwaympg are not statistically significant in predicting price as the p-values are more than 0.05 (5%). These p-values are 0.41912 and 0.20248 for citympg and highwaympg respectively.
+
+Based on this model, one unit of horsepower increases price by 142.0188, peakrpm  decreases price by 3.2091, citympg increases price by 253.6847 and highwaympg decreases price by 365.4374. 
+
+The model has performed quite well, as the variation explained by this model is 0.7255 (72.55%). 
+
+```{r}
+
+```
+
+
+## Task 5
+
+**Analysis of variance (ANOVA)**
+
+```{r}
+# Visualization
+boxplot(price ~ drivewheel,
+data = sample_df,
+main = "Price by Driver wheel",
+xlab = "Driver Wheel",ylab = "Price",
+col = "red",border = "black")
+
+# Compute the analysis of variance
+res.aov <- aov(price ~ drivewheel, data = sample_df)
+# Summary of the analysis
+summary(res.aov)
+```
+
+```{r}
+
+```
+**Interpretation**
+
+As the p-value = 1.27e-12 is less than the significance level 0.05, we can conclude that there are significant differences between the groups highlighted with “*" in the model summary. In other words the mean price among driver wheels are different.
+
+```{r}
+
+```
+
+**Analysis of covariance (ANCOVA)**
+
+```{r}
+# Compute the analysis of variance
+res.aov2 <- aov(price ~ drivewheel + horsepower, data = sample_df)
+# Summary of the analysis
+car::Anova(res.aov2, type="III")
+```
+
+```{r}
+
+```
+**Interpretation**
+
+Based on the output above, we can see the p-values for drivewheel and horsepower are 0.004021 and 2.042e-15 are less than 0.05(5%) significance level. Therefore, drivewheel and horsepower contributes in the model significantly.
+```{r}
+
+```
+## References
+
+* Koloğlu, Y., Birinci, H., Kanalmaz, I., & Özyılmaz, B. (2018). A Multiple Linear Regression Approach For Estimating the Market Value of Football Players in Forward Position. Retrieved from https://arxiv.org/ftp/arxiv/papers/1807/1807.01104.pdf
+
+* Uyanık, G. K., & Güler, N. (2013). A Study on Multiple Linear Regression Analysis. Procedia - Social and Behavioral Sciences, 106, 234–240. https://doi.org/10.1016/j.sbspro.2013.12.027
